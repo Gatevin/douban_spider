@@ -3,17 +3,17 @@ Usage:
 2. create file directory src/
 3. in src/ , git clone
 4. make release according to your os:
-```
+```bash
 # windows
 make release_windows
 # macos
 make release_macos
 # linux
-make_release_linux
+make release_linux
 ```
 
 5. run
-```
+```bash
 # windows
 ./bin/douban_spider.exe
 
@@ -22,3 +22,4 @@ make_release_linux
 
 # linux
 ./bin/douban_spider
+```
