@@ -10,6 +10,8 @@ import (
     "github.com/gocolly/colly"
 )
 
+const MAX_USER_HISTORY = 2000
+
 type UserComment struct {
     MovieName string  `json:"movie_name"`
     MovieID string    `json:"movie_id"`
@@ -18,20 +20,20 @@ type UserComment struct {
 }
 
 type UserCommentList struct {
+    Uid string                 `json:"user_id"`
+    Uname string               `json:"user_name"`
     UserHistory []*UserComment `json:"user_comments"`
 }
 
 type DoubanUserHistoryCollector struct {
     UserCommentList
-    Uid string
-    Uname string
     DoubanColly *colly.Collector
 }
 
 var DoubanUserHistoryHandler = &DoubanUserHistoryCollector{}
 
-func (dh *DoubanUserHistoryCollector) FetchHistoryWithUser() error {
-    dh.UserHistory = make([]*UserComment, 0, 2000)
+func (dh *DoubanUserHistoryCollector) FetchUserHistory() error {
+    dh.UserHistory = make([]*UserComment, 0, MAX_USER_HISTORY)
     dh.DoubanColly = colly.NewCollector(
     )
     dh.DoubanColly.Limit(&colly.LimitRule{
@@ -81,7 +83,7 @@ func (dh *DoubanUserHistoryCollector) FetchHistoryWithUser() error {
     dh.DoubanColly.Visit(url)
     dh.DoubanColly.Wait()
     fileName := dh.Uid + ".txt"
-    f, err := os.OpenFile("./save_result/" + fileName, os.O_CREATE|os.O_RDWR, 0666)
+    f, err := os.OpenFile("./save_result/user_history/" + fileName, os.O_CREATE|os.O_RDWR, 0666)
     defer f.Close()
     if err != nil {
         fmt.Println(err.Error())
