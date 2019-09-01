@@ -39,7 +39,7 @@ func (dh *DoubanUserHistoryCollector) FetchUserHistory() error {
     dh.DoubanColly.Limit(&colly.LimitRule{
 		DomainGlob: "*",
 		Parallelism: 2,
-		RandomDelay: 3*time.Second,
+		RandomDelay: 5*time.Second,
 	})
     dh.DoubanColly.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting: ", r.URL)

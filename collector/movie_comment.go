@@ -18,7 +18,6 @@ type MovieComment struct {
     UserID string    `json:"user_id"`
     Score string     `json:"score"`
     Date string      `json:"date"`
-    
 }
 
 type MovieCommentList struct {
@@ -45,6 +44,10 @@ func (dh *DoubanMovieCommentCollector) FetchMovieComment() error {
 		Parallelism: 2,
 		RandomDelay: 5*time.Second,
 	})
+    err := dh.DoubanColly.Post("https://accounts.douban.com/j/mobile/login/basic", map[string]string{"name":"", "password":""})
+    if err != nil {
+        fmt.Println(err.Error())
+    }
     dh.DoubanColly.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting: ", r.URL)
 		r.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
