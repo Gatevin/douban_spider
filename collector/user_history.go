@@ -38,17 +38,17 @@ func (dh *DoubanUserHistoryCollector) FetchUserHistory() error {
     dh.DoubanColly = colly.NewCollector(
     )
     dh.DoubanColly.Limit(&colly.LimitRule{
-		DomainGlob: "*",
-		Parallelism: 2,
-		RandomDelay: 5*time.Second,
+        DomainGlob: "*",
+        Parallelism: 2,
+        RandomDelay: 5*time.Second,
 	})
     dh.DoubanColly.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting: ", r.URL)
-		r.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+        fmt.Println("Visiting: ", r.URL)
+        r.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
     })
     dh.DoubanColly.OnResponse(func(r *colly.Response) {
-		fmt.Println("Visited: ", r.Request.URL)
-		//fmt.Println("Result is: ", string(r.Body))
+        fmt.Println("Visited: ", r.Request.URL)
+        //fmt.Println("Result is: ", string(r.Body))
     })
     dh.DoubanColly.OnHTML("div[class=grid-view] div[class=info]>ul",func(e *colly.HTMLElement){
         user_comment := &UserComment{}
@@ -75,9 +75,9 @@ func (dh *DoubanUserHistoryCollector) FetchUserHistory() error {
         }
     })
     dh.DoubanColly.OnError(func(r *colly.Response, e error) {
-	    fmt.Println("Request URL: ", r.Request.URL, " failed with response: ", r, "\nError", e)
-	    fmt.Println("Retrying url: ", r.Request.URL)
-	    r.Request.Retry()
+        fmt.Println("Request URL: ", r.Request.URL, " failed with response: ", r, "\nError", e)
+        fmt.Println("Retrying url: ", r.Request.URL)
+        r.Request.Retry()
     })
     url := "https://movie.douban.com/people/"+ dh.Uid + "/collect"
     fmt.Println("fetching url: ", url)
@@ -104,34 +104,4 @@ func (dh *DoubanUserHistoryCollector) FetchUserHistory() error {
         }
     }
 	return nil
-}
-
-
-func (dh *DoubanUserHistoryCollector) Test() error {
-    dh.DoubanColly = colly.NewCollector(
-        //colly.AllowedDomains("https://movie.douban.com/"),
-        //colly.Async(true),
-    )
-    dh.DoubanColly.Limit(&colly.LimitRule{
-		DomainGlob: "*",
-		Parallelism: 2,
-		RandomDelay: 5*time.Second,
-	})
-    dh.DoubanColly.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting: ", r.URL)
-		r.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
-    })
-    dh.DoubanColly.OnResponse(func(r *colly.Response) {
-		fmt.Println("Visited: ", r.Request.URL)
-		fmt.Println("Result is: ", string(r.Body))
-    })
-    dh.DoubanColly.OnError(func(r *colly.Response, e error) {
-	    fmt.Println("Request URL: ", r.Request.URL, " failed with response: ", r, "\nError", e)
-	    fmt.Println("Retrying url: ", r.Request.URL)
-	    r.Request.Retry()
-    })
-    fmt.Println("url is ", "https://movie.douban.com")
-    dh.DoubanColly.Visit("https://movie.douban.com")
-    dh.DoubanColly.Wait()
-    return nil
 }
