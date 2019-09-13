@@ -23,3 +23,7 @@ make release_linux
 # linux
 ./bin/douban_spider
 ```
+
+hint
+
+You may choose to your account in conf/conf.yaml, conf_sample.yaml is given as a sample
