@@ -10,7 +10,7 @@ import (
     "github.com/gocolly/colly"
 )
 
-const MAX_SIZE_OF_REVIEWS = 2000
+const MAX_SIZE_OF_REVIEWS = 3000
 const MAX_SIZE_OF_SHORT_COMMENTS = 20000
 
 type MovieComment struct {
@@ -30,9 +30,24 @@ type MovieCommentList struct {
 type DoubanMovieCommentCollector struct {
     MovieCommentList
     DoubanColly *colly.Collector
+    DoubanUserName string
+    DoubanPassword string
+    UseAccount bool
 }
 
 var DoubanMovieCommentHandler = &DoubanMovieCommentCollector{}
+
+func (dh *DoubanMovieCommentCollector) CancelUseAccount() error {
+    dh.UseAccount = false
+    return nil
+}
+
+func (dh *DoubanMovieCommentCollector) UseDoubanAccount(user_name string, password string) error {
+    dh.DoubanUserName = user_name
+    dh.DoubanPassword = password
+    dh.UseAccount = true
+    return nil
+}
 
 func (dh *DoubanMovieCommentCollector) FetchMovieComment() error {
     dh.MovieShortComments = make([]*MovieComment, 0, MAX_SIZE_OF_SHORT_COMMENTS)
@@ -44,9 +59,15 @@ func (dh *DoubanMovieCommentCollector) FetchMovieComment() error {
 		Parallelism: 2,
 		RandomDelay: 5*time.Second,
 	})
-    err := dh.DoubanColly.Post("https://accounts.douban.com/j/mobile/login/basic", map[string]string{"name":"", "password":""})
-    if err != nil {
-        fmt.Println(err.Error())
+    if dh.UseAccount == true {
+        err := dh.DoubanColly.Post("https://accounts.douban.com/j/mobile/login/basic",
+                                    map[string]string{
+                                            "name": dh.DoubanUserName,
+                                            "password": dh.DoubanPassword,
+                                    })
+        if err != nil {
+            fmt.Println(err.Error())
+        }
     }
     dh.DoubanColly.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting: ", r.URL)
@@ -115,13 +136,26 @@ func (dh *DoubanMovieCommentCollector) FetchMovieComment() error {
 	    //r.Request.Retry()
     })
 
-    review_url := "https://movie.douban.com/subject/"+ dh.MovieID + "/reviews" + "?sort=hotest"
-    fmt.Println("fetching url: ", review_url)
-    dh.DoubanColly.Visit(review_url)
+    // sort=hotest 热度排序 sort=time 时间排序 rating=5 查看五星评分的
+    review_url_star5 := "https://movie.douban.com/subject/"+ dh.MovieID + "/reviews" + "?rating=5"
+    fmt.Println("fetching url: ", review_url_star5)
+    dh.DoubanColly.Visit(review_url_star5)
 
-    short_comments_url := "https://movie.douban.com/subject/" + dh.MovieID + "/comments" + "?status=P"
-    fmt.Println("fetching url: ", short_comments_url)
-    dh.DoubanColly.Visit(short_comments_url)
+    review_url_star4 := "https://movie.douban.com/subject/"+ dh.MovieID + "/reviews" + "?rating=4"
+    fmt.Println("fetching url: ", review_url_star4)
+    dh.DoubanColly.Visit(review_url_star4)
+
+
+    // 热门 https://movie.douban.com/subject/26759819/comments?sort=new_score&status=P&percent_type=h
+    // sort = time 最新 percent_type=h 表示好评(4，5星)
+    short_comments_url_hot := "https://movie.douban.com/subject/" + dh.MovieID + "/comments" + "?sort=new_score&status=P&percent_type=h"
+    fmt.Println("fetching url: ", short_comments_url_hot)
+    dh.DoubanColly.Visit(short_comments_url_hot)
+
+    short_comments_url_time := "https://movie.douban.com/subject/" + dh.MovieID + "/comments" + "?sort=time&status=P&percent_type=h"
+    fmt.Println("fetching url: ", short_comments_url_time)
+    dh.DoubanColly.Visit(short_comments_url_time)
+
 
     dh.DoubanColly.Wait()
 

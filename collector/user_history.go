@@ -10,7 +10,8 @@ import (
     "github.com/gocolly/colly"
 )
 
-const MAX_USER_HISTORY = 2000
+const MAX_USER_HISTORY = 10000
+const MAX_PAGE_NUM = 1000
 
 type UserComment struct {
     MovieName string  `json:"movie_name"`
@@ -69,7 +70,7 @@ func (dh *DoubanUserHistoryCollector) FetchUserHistory() error {
         next_page := e.Attr("href")
         url_next := "https://movie.douban.com" + next_page
         fmt.Println("fetching url_next: ", url_next)
-        if e.Request.Depth < 1000 {
+        if e.Request.Depth <= MAX_PAGE_NUM {
             e.Request.Visit(url_next)
         }
     })
