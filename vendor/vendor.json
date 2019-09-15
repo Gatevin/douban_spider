@@ -211,6 +211,12 @@
 			"revision": ""
 		},
 		{
+			"checksumSHA1": "NWdKy2mIvqbKMJAu0QqrTzEYdkg=",
+			"path": "github.com/tealeg/xlsx",
+			"revision": "a6243d92b3699a06d678109bc19b1529b3f84aba",
+			"revisionTime": "2019-08-07T18:21:18Z"
+		},
+		{
 			"checksumSHA1": "Ld2oZWjPRdRIwYfDJEhuCpvesdo=",
 			"path": "github.com/temoto/robotstxt",
 			"revision": ""

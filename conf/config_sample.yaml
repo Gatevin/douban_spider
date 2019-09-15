@@ -2,3 +2,6 @@ douban_account:
     use_account: false
     user_name: your_account 
     password: your_password
+
+douban_ids:
+    file_name: ./conf/douban_ids.xlsx
