@@ -1,4 +1,4 @@
-package anime
+package model
 
 import (
     "fmt"
@@ -12,18 +12,18 @@ import (
 const MAX_SIZE_OF_ANIME_LIST = 10000
 
 type Anime struct {
-    Name string          `json:anime_name`
-    DoubanIds []string   `json:douban_ids`
+    Name string          `json:"anime_name"`
+    DoubanIds []string   `json:"douban_ids"`
 }
 
 type AnimeList struct {
-    Animes []*Anime       `json:anime_list`
+    Animes []*Anime       `json:"anime_list"`
 }
 
 func (al *AnimeList) ReadXlsx(file_path string) error {
     xlsxFileHandler, err := xlsx.OpenFile(file_path)
     if err != nil {
-        fmt.Println("Open file %s fail, error : %s", file_path, err.Error())
+        fmt.Println("Open file ", file_path, " failed with error : ", err.Error())
         return err
     }
     al.Animes = make([]*Anime, 0, MAX_SIZE_OF_ANIME_LIST)

@@ -166,9 +166,27 @@
 			"revision": ""
 		},
 		{
+			"checksumSHA1": "EVWOLwI0wsRAxvD3L9dMjA/JRHU=",
+			"path": "github.com/moul/http2curl",
+			"revision": "47c06e753c699ec2871aa3e2c209a8adff67e0f3",
+			"revisionTime": "2019-06-11T21:16:36Z"
+		},
+		{
+			"checksumSHA1": "J1xE8xiE9grdDMUL3bj0aLEn+mI=",
+			"path": "github.com/parnurzeal/gorequest",
+			"revision": "b0604454e3c35c21d4c86e4771dc1e24c896cdd3",
+			"revisionTime": "2019-01-14T09:06:33Z"
+		},
+		{
 			"checksumSHA1": "B45+ZmWjBhsZb4vSgtdzgYkhu0I=",
 			"path": "github.com/pelletier/go-toml",
 			"revision": ""
+		},
+		{
+			"checksumSHA1": "I7hloldMJZTqUx6hbVDp5nk9fZQ=",
+			"path": "github.com/pkg/errors",
+			"revision": "27936f6d90f9c8e1145f11ed52ffffbfdb9e0af7",
+			"revisionTime": "2019-02-27T00:00:51Z"
 		},
 		{
 			"checksumSHA1": "9Aoisa7A4d17LuuCjxm8WHrdWOU=",
