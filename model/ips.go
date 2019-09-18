@@ -4,14 +4,12 @@ import (
 	"fmt"
 	"strconv"
 	"github.com/parnurzeal/gorequest"
-	"github.com/json-iterator/go"
+	. "douban_spider/utils"
 	"reflect"
 	"strings"
 )
 
 const MAX_SIZE_IP_POOL = 100
-
-var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type IP struct {
 	Address string    `json:"address"`
