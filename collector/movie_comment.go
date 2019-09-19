@@ -8,6 +8,8 @@ import (
     "strings"
     "encoding/json"
     "github.com/gocolly/colly"
+    "github.com/gocolly/colly/proxy"
+    "douban_spider/utils"
 )
 
 const MAX_SIZE_OF_REVIEWS = 3000
@@ -33,9 +35,26 @@ type DoubanMovieCommentCollector struct {
     DoubanUserName string
     DoubanPassword string
     UseAccount bool
+
+    AnonymousIp *(utils.IP)
+    Anonymous bool
 }
 
 var DoubanMovieCommentHandler = &DoubanMovieCommentCollector{}
+
+func (dh *DoubanMovieCommentCollector) UseAnonymousIp() error {
+    ip := utils.Ipmgr.GetAnonymousIp()
+    if ip != nil {
+        dh.AnonymousIp = ip
+        dh.Anonymous = true
+    }
+    return nil
+}
+
+func (dh *DoubanMovieCommentCollector) CancelUseAnonymousIp() error {
+    dh.Anonymous = false
+    return nil
+}
 
 func (dh *DoubanMovieCommentCollector) CancelUseAccount() error {
     dh.UseAccount = false
@@ -49,16 +68,25 @@ func (dh *DoubanMovieCommentCollector) UseDoubanAccount(user_name string, passwo
     return nil
 }
 
-func (dh *DoubanMovieCommentCollector) FetchMovieComment() error {
-    dh.MovieShortComments = make([]*MovieComment, 0, MAX_SIZE_OF_SHORT_COMMENTS)
-    dh.MovieReviews = make([]*MovieComment, 0, MAX_SIZE_OF_REVIEWS)
+
+// 爬虫规则
+func (dh *DoubanMovieCommentCollector) ConfigCollyRule() error {
     dh.DoubanColly = colly.NewCollector(
     )
     dh.DoubanColly.Limit(&colly.LimitRule{
         DomainGlob: "*",
         Parallelism: 2,
         RandomDelay: 5*time.Second,
-	})
+    })
+    if dh.Anonymous == true {
+        proxyStr := "http://" + dh.AnonymousIp.Address + ":" + dh.AnonymousIp.Port
+        rp, err := proxy.RoundRobinProxySwitcher(proxyStr)
+        if err != nil {
+            fmt.Println("Colly Proxy set error")
+            return nil
+        }
+        dh.DoubanColly.SetProxyFunc(rp)
+    }
     if dh.UseAccount == true {
         err := dh.DoubanColly.Post("https://accounts.douban.com/j/mobile/login/basic",
                                     map[string]string{
@@ -135,6 +163,13 @@ func (dh *DoubanMovieCommentCollector) FetchMovieComment() error {
         //fmt.Println("Retrying url: ", r.Request.URL)
         //r.Request.Retry()
     })
+    return nil
+}
+
+// 启动对一个作品id的爬虫
+func (dh *DoubanMovieCommentCollector) FetchMovieComment() error {
+    dh.MovieShortComments = make([]*MovieComment, 0, MAX_SIZE_OF_SHORT_COMMENTS)
+    dh.MovieReviews = make([]*MovieComment, 0, MAX_SIZE_OF_REVIEWS)
 
     // sort=hotest 热度排序 sort=time 时间排序 rating=5 查看五星评分的
     review_url_star5 := "https://movie.douban.com/subject/"+ dh.MovieID + "/reviews" + "?rating=5"
@@ -155,7 +190,6 @@ func (dh *DoubanMovieCommentCollector) FetchMovieComment() error {
     short_comments_url_time := "https://movie.douban.com/subject/" + dh.MovieID + "/comments" + "?sort=time&status=P&percent_type=h"
     fmt.Println("fetching url: ", short_comments_url_time)
     dh.DoubanColly.Visit(short_comments_url_time)
-
 
     dh.DoubanColly.Wait()
 

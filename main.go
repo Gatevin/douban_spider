@@ -5,7 +5,7 @@ import (
     "fmt"
     "douban_spider/config"
     "douban_spider/collector"
-    "douban_spider/model"
+    "douban_spider/utils"
 )
 
 func main() {
@@ -25,8 +25,8 @@ func main() {
     doubanIdsXlsxPath := confVip.GetString("douban_ids.file_name")
     fmt.Println(doubanIdsXlsxPath)
     
-    model.Ipmgr.FetchIpList(10)
-    model.Ipmgr.PrintPoolInfo()
+    utils.Ipmgr.FetchIpList(10)
+    utils.Ipmgr.PrintPoolInfo()
 
     //var al = &anime.AnimeList{}
     //al.ReadXlsx(doubanIdsXlsxPath)

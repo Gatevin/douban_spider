@@ -1,12 +1,12 @@
-package model
+package utils
 
 import (
 	"fmt"
 	"strconv"
 	"github.com/parnurzeal/gorequest"
-	. "douban_spider/utils"
 	"reflect"
 	"strings"
+	//"math/rand"
 )
 
 const MAX_SIZE_IP_POOL = 100
@@ -25,12 +25,16 @@ type IpPool struct {
 
 type IpPoolMgr struct {
 	IpPool
+	BannedIp map[string]bool
+	UsingIp map[string]bool
 }
 
 var Ipmgr = &IpPoolMgr{}
 
 func (ippm *IpPoolMgr) Prepare() error {
 	ippm.SourceWebsite = "lab.crossincode.com"
+	ippm.BannedIp = make(map[string]bool)
+	ippm.UsingIp = make(map[string]bool)
 	return nil
 }
 
@@ -104,5 +108,21 @@ func (ippm *IpPoolMgr) FetchIpList(num int) error {
 		}
 	}
 
+	return nil
+}
+
+func (ippm *IpPoolMgr) GetAnonymousIp() *IP {
+	for _, ip := range ippm.IpList {
+		if banned, exist := ippm.BannedIp[ip.Address]; banned || exist {
+			continue
+		}
+		if using, exist := ippm.UsingIp[ip.Address]; using || exist {
+			continue
+		}
+		ippm.BannedIp[ip.Address] = true
+		ippm.UsingIp[ip.Address] = true
+		return ip
+	}
+	fmt.Println("No availabel ip found in ip list")
 	return nil
 }

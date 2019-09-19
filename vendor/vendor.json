@@ -90,6 +90,12 @@
 			"revisionTime": "2019-07-02T17:22:52Z"
 		},
 		{
+			"checksumSHA1": "YGIR4Qf3JyTN8ybBs8x1EsxGBqw=",
+			"path": "github.com/gocolly/colly/proxy",
+			"revision": "8defd40054c5b66ae4abb61f985a5dfde3314564",
+			"revisionTime": "2019-08-12T11:23:18Z"
+		},
+		{
 			"checksumSHA1": "3z1DDx08GBoCyeADVcQ/bYJhWVo=",
 			"path": "github.com/gocolly/colly/storage",
 			"revision": "2e4108fbc870b1670c2e81c37f53feb1eb84583b",
