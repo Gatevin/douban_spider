@@ -4,8 +4,9 @@ package main
 import (
     "fmt"
     "douban_spider/config"
-    "douban_spider/collector"
-    "douban_spider/utils"
+    //"douban_spider/collector"
+    //"douban_spider/utils"
+    "douban_spider/model"
 )
 
 func main() {
@@ -17,20 +18,17 @@ func main() {
         userName = confVip.GetString("doubanAccount.userName")
         password = confVip.GetString("doubanAccount.password")
         fmt.Println("Douban account using..\nAcount: ", userName, " Password: ", password)
-        collector.DoubanMovieCommentHandler.UseDoubanAccount(userName, password)
+        //collector.DoubanMovieCommentHandler.UseDoubanAccount(userName, password)
     } else {
         fmt.Println("No douban account will be used")
     }
 
     doubanIdsXlsxPath := confVip.GetString("douban_ids.file_name")
     fmt.Println(doubanIdsXlsxPath)
-    
-    utils.Ipmgr.FetchIpList(10)
-    utils.Ipmgr.PrintPoolInfo()
 
-    //var al = &anime.AnimeList{}
-    //al.ReadXlsx(doubanIdsXlsxPath)
-    //al.CollectAnimeList(useDoubanAccount, userName, password)
+    var al = model.AnimeList{}
+    al.ReadXlsx(doubanIdsXlsxPath)
+    al.CollectAnimeList(useDoubanAccount, userName, password)
     
 
     //collector.DoubanUserHistoryHandler.Uid = "summermonica"

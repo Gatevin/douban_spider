@@ -6,10 +6,9 @@ import (
     "bufio"
     "time"
     "strings"
-    "encoding/json"
     "github.com/gocolly/colly"
     "github.com/gocolly/colly/proxy"
-    "douban_spider/utils"
+    . "douban_spider/utils"
 )
 
 const MAX_SIZE_OF_REVIEWS = 3000
@@ -36,14 +35,14 @@ type DoubanMovieCommentCollector struct {
     DoubanPassword string
     UseAccount bool
 
-    AnonymousIp *(utils.IP)
+    AnonymousIp *IP
     Anonymous bool
 }
 
 var DoubanMovieCommentHandler = &DoubanMovieCommentCollector{}
 
-func (dh *DoubanMovieCommentCollector) UseAnonymousIp() error {
-    ip := utils.Ipmgr.GetAnonymousIp()
+func (dh *DoubanMovieCommentCollector) UseAnonymousIp(ip *IP) error {
+    //ip := utils.Ipmgr.GetAnonymousIp()
     if ip != nil {
         dh.AnonymousIp = ip
         dh.Anonymous = true
@@ -80,6 +79,7 @@ func (dh *DoubanMovieCommentCollector) ConfigCollyRule() error {
     })
     if dh.Anonymous == true {
         proxyStr := "http://" + dh.AnonymousIp.Address + ":" + dh.AnonymousIp.Port
+        fmt.Println(proxyStr)
         rp, err := proxy.RoundRobinProxySwitcher(proxyStr)
         if err != nil {
             fmt.Println("Colly Proxy set error")
@@ -199,7 +199,7 @@ func (dh *DoubanMovieCommentCollector) FetchMovieComment() error {
     if err != nil {
         fmt.Println(err.Error())
     } else {
-        file_content, err := json.Marshal(dh.MovieCommentList)
+        file_content, err := Json.Marshal(dh.MovieCommentList)
         if err != nil {
             fmt.Println(err.Error())
         } else {
